@@ -24,22 +24,19 @@ SECRET_KEY = 'django-insecure-ywpqra=b7%zey10n9t8bp76=#wn(h$0c!94^3f5w9c3jovk8=-
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False  # Set to False in production
+DEBUG = True  # Set to False in production
 
-ALLOWED_HOSTS = [
-    '54.205.224.106',  # Your EC2 IP
-    'localhost',
-    '127.0.0.1',
-    '[::1]',
-]
+ALLOWED_HOSTS = ['54.205.224.106', 'localhost', '127.0.0.1']
 
-# For better security, if you're using a domain name, use:
-# ALLOWED_HOSTS = ['.your-domain.com']  # The dot allows subdomains
+
+# CSRF Settings
+CSRF_TRUSTED_ORIGINS = ['http://54.205.224.106']
+
 
 # Security Settings
-CSRF_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = False
 SECURE_SSL_REDIRECT = False  # Set to True if you have SSL configured
-SESSION_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = False
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 X_FRAME_OPTIONS = 'DENY'
