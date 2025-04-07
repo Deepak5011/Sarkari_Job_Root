@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ result.exam_name }} Result - Sarkari Job Portal{% endblock %}
+
+{% block content %}
+    <div class="container py-4">
+        <!-- Result Header -->
+        <div class="row mb-4">
+            <div class="col-md-8">
+                <h1 class="mb-2">{{ result.exam_name }}</h1>
+                <h5 class="text-muted mb-3">{{ result.organization }}</h5>
+                <div class="d-flex align-items-center mb-3">
+                    <span class="category-badge me-3">{{ result.category.name }}</span>
+                    <span class="text-muted">
+                        <i class="fas fa-calendar me-1"></i>
+                        Result Date: {{ result.result_date }}
+                    </span>
+                </div>
+            </div>
+            <div class="col-md-4 text-md-end">
+                <a href="{{ result.result_link }}" target="_blank" class="btn btn-success btn-lg">
+                    <i class="fas fa-download me-2"></i>Download Result
+                </a>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Main Content -->
+            <div class="col-md-8">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h4 class="card-title mb-3">Result Details</h4>
+                        <div class="result-description mb-4">
+                            {{ result.description|linebreaks }}
+                        </div>
+
+                        {% if result.important_instructions %}
+                            <h5 class="mb-3">Important Instructions</h5>
+                            <div class="result-instructions mb-4">
+                                {{ result.important_instructions|linebreaks }}
+                            </div>
+                        {% endif %}
+
+                        {% if result.cutoff_details %}
+                            <h5 class="mb-3">Cut-off Details</h5>
+                            <div class="result-cutoff mb-4">
+                                {{ result.cutoff_details|linebreaks }}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Important Dates -->
+                {% if result.important_dates %}
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h4 class="card-title mb-3">Important Dates</h4>
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <tbody>
+                                        {% for date in result.important_dates %}
+                                            <tr>
+                                                <td>{{ date.event }}</td>
+                                                <td class="text-end">{{ date.date }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Sidebar -->
+            <div class="col-md-4">
+                <!-- Quick Links -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3">Quick Links</h5>
+                        <div class="list-group">
+                            {% if result.official_website %}
+                                <a href="{{ result.official_website }}" target="_blank" class="list-group-item list-group-item-action">
+                                    <i class="fas fa-external-link-alt me-2"></i>Official Website
+                                </a>
+                            {% endif %}
+                            {% if result.answer_key_link %}
+                                <a href="{{ result.answer_key_link }}" target="_blank" class="list-group-item list-group-item-action">
+                                    <i class="fas fa-key me-2"></i>Answer Key
+                                </a>
+                            {% endif %}
+                            {% if result.merit_list_link %}
+                                <a href="{{ result.merit_list_link }}" target="_blank" class="list-group-item list-group-item-action">
+                                    <i class="fas fa-list-ol me-2"></i>Merit List
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Share -->
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3">Share Result</h5>
+                        <div class="d-flex justify-content-around">
+                            <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}" target="_blank" class="btn btn-outline-primary">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                            <a href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri }}&text={{ result.exam_name }} Result" target="_blank" class="btn btn-outline-info">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                            <a href="https://wa.me/?text={{ result.exam_name }} Result - {{ request.build_absolute_uri }}" target="_blank" class="btn btn-outline-success">
+                                <i class="fab fa-whatsapp"></i>
+                            </a>
+                            <a href="https://telegram.me/share/url?url={{ request.build_absolute_uri }}&text={{ result.exam_name }} Result" target="_blank" class="btn btn-outline-info">
+                                <i class="fab fa-telegram-plane"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

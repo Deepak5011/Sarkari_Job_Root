@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="400" height="300" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+    <!-- Background Circle -->
+    <circle cx="200" cy="150" r="120" fill="#f8f9fa" stroke="#dee2e6" stroke-width="2"/>
+    
+    <!-- 404 Text -->
+    <text x="200" y="180" font-family="Arial, sans-serif" font-size="120" font-weight="bold" fill="#0d6efd" text-anchor="middle">404</text>
+    
+    <!-- Decorative Elements -->
+    <circle cx="100" cy="100" r="10" fill="#0d6efd" opacity="0.5"/>
+    <circle cx="300" cy="100" r="10" fill="#0d6efd" opacity="0.5"/>
+    <circle cx="100" cy="200" r="10" fill="#0d6efd" opacity="0.5"/>
+    <circle cx="300" cy="200" r="10" fill="#0d6efd" opacity="0.5"/>
+    
+    <!-- Search Icon -->
+    <path d="M150 220 L250 220 L220 250 L150 220" fill="#0d6efd" opacity="0.3"/>
+    <circle cx="200" cy="220" r="30" stroke="#0d6efd" stroke-width="2" fill="none"/>
+</svg> 

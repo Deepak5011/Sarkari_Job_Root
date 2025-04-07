@@ -1,0 +1,255 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Admin Dashboard - Sarkari Job Portal{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Welcome Section -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-2">Welcome back, {{ request.user.get_full_name|default:request.user.username }}</h1>
+            <p class="text-muted">Here's what's happening with your job portal today.</p>
+        </div>
+        <div class="d-flex gap-2">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addJobModal">
+                <i class="fas fa-plus"></i> Add New Job
+            </button>
+            <button type="button" class="btn btn-success">
+                <i class="fas fa-download"></i> Export Data
+            </button>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="stats-card" style="background: linear-gradient(45deg, #FF6B6B, #FF8E53);">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="stats-info">
+                        <h6 class="mb-1">10th Level Jobs</h6>
+                        <h3 class="mb-0">{{ jobs_10th_count }}</h3>
+                        <small class="text-white-50">Active: {{ active_10th_count }}</small>
+                    </div>
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stats-card" style="background: linear-gradient(45deg, #4CAF50, #8BC34A);">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="stats-info">
+                        <h6 class="mb-1">12th Level Jobs</h6>
+                        <h3 class="mb-0">{{ jobs_12th_count }}</h3>
+                        <small class="text-white-50">Active: {{ active_12th_count }}</small>
+                    </div>
+                    <i class="fas fa-school"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stats-card" style="background: linear-gradient(45deg, #2196F3, #03A9F4);">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="stats-info">
+                        <h6 class="mb-1">Graduate Level Jobs</h6>
+                        <h3 class="mb-0">{{ jobs_graduate_count }}</h3>
+                        <small class="text-white-50">Active: {{ active_graduate_count }}</small>
+                    </div>
+                    <i class="fas fa-university"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stats-card" style="background: linear-gradient(45deg, #9C27B0, #E91E63);">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="stats-info">
+                        <h6 class="mb-1">PG Level Jobs</h6>
+                        <h3 class="mb-0">{{ jobs_pg_count }}</h3>
+                        <small class="text-white-50">Active: {{ active_pg_count }}</small>
+                    </div>
+                    <i class="fas fa-award"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Section -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="card-title mb-0">Jobs Overview</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="jobsChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="card-title mb-0">Job Categories</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="categoriesChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Latest Jobs Table -->
+    <div class="card shadow-sm">
+        <div class="card-header bg-white d-flex justify-content-between align-items-center">
+            <h5 class="card-title mb-0">Latest Jobs</h5>
+            <a href="{% url 'admin:jobs_job_changelist' %}" class="btn btn-sm btn-primary">View All</a>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Category</th>
+                            <th>Organization</th>
+                            <th>Location</th>
+                            <th>Deadline</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for job in latest_jobs %}
+                        <tr>
+                            <td>{{ job.title }}</td>
+                            <td>
+                                <span class="badge bg-{{ job.category.color }}">
+                                    {{ job.category.name }}
+                                </span>
+                            </td>
+                            <td>{{ job.organization }}</td>
+                            <td>{{ job.location }}</td>
+                            <td>{{ job.application_deadline|date:"M d, Y" }}</td>
+                            <td>
+                                {% if job.is_active %}
+                                <span class="badge bg-success">Active</span>
+                                {% else %}
+                                <span class="badge bg-danger">Inactive</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{% url 'admin:jobs_job_change' job.pk %}" class="btn btn-sm btn-primary">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Job Modal -->
+<div class="modal fade" id="addJobModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add New Job</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post" action="{% url 'admin:jobs_job_add' %}">
+                    {% csrf_token %}
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Title</label>
+                            <input type="text" name="title" class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Category</label>
+                            <select name="category" class="form-select" required>
+                                <option value="">Select Category</option>
+                                <option value="1">10th Level Jobs</option>
+                                <option value="2">12th Level Jobs</option>
+                                <option value="3">Graduate Level Jobs</option>
+                                <option value="4">PG Level Jobs</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Organization</label>
+                            <input type="text" name="organization" class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Location</label>
+                            <input type="text" name="location" class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Salary Range</label>
+                            <input type="text" name="salary_range" class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Application Deadline</label>
+                            <input type="date" name="application_deadline" class="form-control" required>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Description</label>
+                            <textarea name="description" class="form-control" rows="4" required></textarea>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <button type="submit" class="btn btn-primary">Add Job</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Jobs Overview Chart
+    const jobsCtx = document.getElementById('jobsChart').getContext('2d');
+    new Chart(jobsCtx, {
+        type: 'line',
+        data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+            datasets: [{
+                label: 'Total Jobs',
+                data: [65, 59, 80, 81, 56, 55],
+                borderColor: '#2196F3',
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false
+        }
+    });
+
+    // Categories Chart
+    const categoriesCtx = document.getElementById('categoriesChart').getContext('2d');
+    new Chart(categoriesCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['10th Level', '12th Level', 'Graduate', 'PG Level'],
+            datasets: [{
+                data: [30, 25, 25, 20],
+                backgroundColor: [
+                    '#FF6B6B',
+                    '#4CAF50',
+                    '#2196F3',
+                    '#9C27B0'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false
+        }
+    });
+});
+</script>
+{% endblock %} 

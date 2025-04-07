@@ -1,0 +1,181 @@
+{% extends 'base.html' %}
+
+{% block title %}Jobs - Sarkari Job Portal{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <!-- Filters Sidebar -->
+        <div class="col-lg-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title mb-4">Filters</h5>
+                    
+                    <!-- Search Filter -->
+                    <div class="mb-4">
+                        <label class="form-label">Search</label>
+                        <form method="get" class="d-flex">
+                            <input type="text" name="q" class="form-control me-2" 
+                                   placeholder="Search jobs..." 
+                                   value="{{ search_query }}">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Qualification Level Filter -->
+                    <div class="mb-4">
+                        <label class="form-label">Qualification Level</label>
+                        <div class="list-group">
+                            <a href="{% url 'jobs:job_list' %}" 
+                               class="list-group-item list-group-item-action {% if not selected_category %}active{% endif %}">
+                                All Levels
+                            </a>
+                            <a href="{% url 'jobs:job_list' %}?category=1" 
+                               class="list-group-item list-group-item-action {% if selected_category == '1' %}active{% endif %}">
+                                <i class="fas fa-graduation-cap me-2"></i>10th Level Jobs
+                            </a>
+                            <a href="{% url 'jobs:job_list' %}?category=2" 
+                               class="list-group-item list-group-item-action {% if selected_category == '2' %}active{% endif %}">
+                                <i class="fas fa-school me-2"></i>12th Level Jobs
+                            </a>
+                            <a href="{% url 'jobs:job_list' %}?category=3" 
+                               class="list-group-item list-group-item-action {% if selected_category == '3' %}active{% endif %}">
+                                <i class="fas fa-university me-2"></i>Graduate Level Jobs
+                            </a>
+                            <a href="{% url 'jobs:job_list' %}?category=4" 
+                               class="list-group-item list-group-item-action {% if selected_category == '4' %}active{% endif %}">
+                                <i class="fas fa-award me-2"></i>PG Level Jobs
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Location Filter -->
+                    <div class="mb-4">
+                        <label class="form-label">Location</label>
+                        <select name="location" class="form-select" onchange="this.form.submit()">
+                            <option value="">All Locations</option>
+                            <option value="delhi" {% if location == 'delhi' %}selected{% endif %}>Delhi</option>
+                            <option value="mumbai" {% if location == 'mumbai' %}selected{% endif %}>Mumbai</option>
+                            <option value="bangalore" {% if location == 'bangalore' %}selected{% endif %}>Bangalore</option>
+                            <option value="chennai" {% if location == 'chennai' %}selected{% endif %}>Chennai</option>
+                            <option value="kolkata" {% if location == 'kolkata' %}selected{% endif %}>Kolkata</option>
+                        </select>
+                    </div>
+
+                    <!-- Salary Range Filter -->
+                    <div class="mb-4">
+                        <label class="form-label">Salary Range</label>
+                        <select name="salary" class="form-select" onchange="this.form.submit()">
+                            <option value="">All Ranges</option>
+                            <option value="0-20000" {% if salary == '0-20000' %}selected{% endif %}>₹0 - ₹20,000</option>
+                            <option value="20000-50000" {% if salary == '20000-50000' %}selected{% endif %}>₹20,000 - ₹50,000</option>
+                            <option value="50000-100000" {% if salary == '50000-100000' %}selected{% endif %}>₹50,000 - ₹1,00,000</option>
+                            <option value="100000+" {% if salary == '100000+' %}selected{% endif %}>₹1,00,000+</option>
+                        </select>
+                    </div>
+
+                    <!-- Job Type Filter -->
+                    <div class="mb-4">
+                        <label class="form-label">Job Type</label>
+                        <div class="form-check">
+                            <input type="checkbox" name="job_type" value="full_time" class="form-check-input" 
+                                   {% if 'full_time' in job_types %}checked{% endif %}>
+                            <label class="form-check-label">Full Time</label>
+                        </div>
+                        <div class="form-check">
+                            <input type="checkbox" name="job_type" value="part_time" class="form-check-input"
+                                   {% if 'part_time' in job_types %}checked{% endif %}>
+                            <label class="form-check-label">Part Time</label>
+                        </div>
+                        <div class="form-check">
+                            <input type="checkbox" name="job_type" value="contract" class="form-check-input"
+                                   {% if 'contract' in job_types %}checked{% endif %}>
+                            <label class="form-check-label">Contract</label>
+                        </div>
+                    </div>
+
+                    <!-- Experience Level Filter -->
+                    <div class="mb-4">
+                        <label class="form-label">Experience Level</label>
+                        <select name="experience" class="form-select" onchange="this.form.submit()">
+                            <option value="">All Levels</option>
+                            <option value="fresher" {% if experience == 'fresher' %}selected{% endif %}>Fresher</option>
+                            <option value="1-3" {% if experience == '1-3' %}selected{% endif %}>1-3 years</option>
+                            <option value="3-5" {% if experience == '3-5' %}selected{% endif %}>3-5 years</option>
+                            <option value="5+" {% if experience == '5+' %}selected{% endif %}>5+ years</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100">Apply Filters</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Job Listings -->
+        <div class="col-lg-9">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="section-title">Available Jobs</h2>
+                <div class="d-flex gap-2">
+                    <select class="form-select" onchange="window.location.href=this.value">
+                        <option value="{% url 'jobs:job_list' %}">Sort By</option>
+                        <option value="{% url 'jobs:job_list' %}?sort=latest">Latest First</option>
+                        <option value="{% url 'jobs:job_list' %}?sort=salary_high">Salary: High to Low</option>
+                        <option value="{% url 'jobs:job_list' %}?sort=salary_low">Salary: Low to High</option>
+                    </select>
+                </div>
+            </div>
+
+            {% if jobs %}
+                <div class="row g-4">
+                    {% for job in jobs %}
+                    <div class="col-md-6">
+                        <div class="job-card">
+                            <div class="job-header">
+                                <span class="job-category">{{ job.category.name }}</span>
+                                <span class="job-deadline">Deadline: {{ job.application_deadline|date:"M d, Y" }}</span>
+                            </div>
+                            <h3 class="job-title">{{ job.title }}</h3>
+                            <p class="job-organization">{{ job.organization }}</p>
+                            <p class="job-location"><i class="fas fa-map-marker-alt"></i> {{ job.location }}</p>
+                            <p class="job-salary"><i class="fas fa-money-bill-wave"></i> {{ job.salary_range }}</p>
+                            <a href="{% url 'jobs:job_detail' job.pk %}" class="btn btn-primary w-100">View Details</a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Pagination -->
+                {% if jobs.has_other_pages %}
+                <nav aria-label="Page navigation" class="mt-4">
+                    <ul class="pagination justify-content-center">
+                        {% if jobs.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ jobs.previous_page_number }}">Previous</a>
+                        </li>
+                        {% endif %}
+
+                        {% for num in jobs.paginator.page_range %}
+                        <li class="page-item {% if jobs.number == num %}active{% endif %}">
+                            <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                        </li>
+                        {% endfor %}
+
+                        {% if jobs.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ jobs.next_page_number }}">Next</a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                {% endif %}
+            {% else %}
+                <div class="alert alert-info">
+                    No jobs found matching your criteria.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %} 

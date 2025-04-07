@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+
+{% block title %}Apply for {{ job.title }} - Sarkari Job Portal{% endblock %}
+
+{% block content %}
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="card-title mb-4">Apply for {{ job.title }}</h2>
+                    
+                    <!-- Job Summary -->
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h5 class="text-muted mb-1">{{ job.organization }}</h5>
+                                <div>
+                                    <span class="category-badge">{{ job.category.name }}</span>
+                                    <span class="badge bg-secondary">{{ job.job_type }}</span>
+                                </div>
+                            </div>
+                            <div class="text-end">
+                                <div class="text-danger">
+                                    <i class="fas fa-calendar-times me-1"></i>
+                                    Last Date: {{ job.application_end_date }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <!-- Application Form -->
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <!-- Display form errors if any -->
+                        {% if form.errors %}
+                            <div class="alert alert-danger">
+                                <h5 class="alert-heading">Please correct the following errors:</h5>
+                                {{ form.errors }}
+                            </div>
+                        {% endif %}
+
+                        <!-- Notes Field -->
+                        <div class="mb-3">
+                            <label for="{{ form.notes.id_for_label }}" class="form-label">Additional Notes</label>
+                            {{ form.notes }}
+                            {% if form.notes.help_text %}
+                                <div class="form-text">{{ form.notes.help_text }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Confirmation Checkbox -->
+                        <div class="mb-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="confirmCheck" required>
+                                <label class="form-check-label" for="confirmCheck">
+                                    I confirm that I have read the job details and meet all eligibility criteria
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-paper-plane me-1"></i> Submit Application
+                            </button>
+                            <a href="{% url 'jobs:job_detail' job.pk %}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-1"></i> Back to Job Details
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Important Information -->
+            <div class="card mt-4">
+                <div class="card-body">
+                    <h5 class="card-title">Important Information</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2">
+                            <i class="fas fa-info-circle text-primary me-2"></i>
+                            Make sure you have read the official notification carefully before applying.
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-info-circle text-primary me-2"></i>
+                            Verify that you meet all eligibility criteria including age, qualification, and experience requirements.
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-info-circle text-primary me-2"></i>
+                            Keep your documents ready before starting the application process.
+                        </li>
+                        <li>
+                            <i class="fas fa-info-circle text-primary me-2"></i>
+                            Pay the application fee (if applicable) and complete the process before the last date.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %} 

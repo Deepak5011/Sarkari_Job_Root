@@ -1,0 +1,232 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ job.title }} - Sarkari Job Portal{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <!-- Main Content -->
+        <div class="col-lg-8">
+            <!-- Job Header -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            <h1 class="h2 mb-1">{{ job.title }}</h1>
+                            <h5 class="text-muted mb-2">{{ job.organization }}</h5>
+                            <div>
+                                <span class="category-badge">{{ job.category.name }}</span>
+                                <span class="badge bg-secondary">{{ job.job_type }}</span>
+                            </div>
+                        </div>
+                        <div class="text-end">
+                            <div class="text-muted mb-2">
+                                <i class="fas fa-eye me-1"></i> {{ job.views_count }} views
+                            </div>
+                            {% if user.is_authenticated %}
+                                {% if not has_applied %}
+                                    <a href="{% url 'jobs:apply_job' job.pk %}" class="btn btn-primary">
+                                        <i class="fas fa-paper-plane me-1"></i> Apply Now
+                                    </a>
+                                {% else %}
+                                    <button class="btn btn-success" disabled>
+                                        <i class="fas fa-check me-1"></i> Applied
+                                    </button>
+                                {% endif %}
+                            {% else %}
+                                <a href="{% url 'login' %}?next={{ request.path }}" class="btn btn-primary">
+                                    Login to Apply
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <i class="fas fa-map-marker-alt text-muted me-2"></i>
+                                <strong>Location:</strong> {{ job.location }}
+                            </div>
+                            <div class="mb-3">
+                                <i class="fas fa-users text-muted me-2"></i>
+                                <strong>Total Vacancies:</strong> {{ job.total_vacancies }}
+                            </div>
+                            <div>
+                                <i class="fas fa-money-bill text-muted me-2"></i>
+                                <strong>Salary:</strong> {{ job.salary }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <i class="fas fa-calendar text-muted me-2"></i>
+                                <strong>Start Date:</strong> {{ job.application_start_date }}
+                            </div>
+                            <div class="mb-3">
+                                <i class="fas fa-calendar-times text-danger me-2"></i>
+                                <strong>Last Date:</strong> {{ job.application_end_date }}
+                            </div>
+                            <div>
+                                <i class="fas fa-clock text-muted me-2"></i>
+                                <strong>Exam Date:</strong> 
+                                {% if job.exam_date %}
+                                    {{ job.exam_date }}
+                                {% else %}
+                                    To be announced
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Job Details Tabs -->
+            <div class="card">
+                <div class="card-body">
+                    <ul class="nav nav-tabs" id="jobTabs" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="description-tab" data-bs-toggle="tab" href="#description" role="tab">
+                                Description
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="eligibility-tab" data-bs-toggle="tab" href="#eligibility" role="tab">
+                                Eligibility
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="exam-tab" data-bs-toggle="tab" href="#exam" role="tab">
+                                Exam Pattern
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="syllabus-tab" data-bs-toggle="tab" href="#syllabus" role="tab">
+                                Syllabus
+                            </a>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content mt-4" id="jobTabsContent">
+                        <!-- Description Tab -->
+                        <div class="tab-pane fade show active" id="description" role="tabpanel">
+                            {{ job.description|linebreaks }}
+                        </div>
+
+                        <!-- Eligibility Tab -->
+                        <div class="tab-pane fade" id="eligibility" role="tabpanel">
+                            <h5>Age Limit</h5>
+                            <p>{{ job.age_limit }}</p>
+
+                            <h5>Educational Qualification</h5>
+                            <p>{{ job.qualification|linebreaks }}</p>
+
+                            {% if job.experience %}
+                                <h5>Experience Required</h5>
+                                <p>{{ job.experience|linebreaks }}</p>
+                            {% endif %}
+                        </div>
+
+                        <!-- Exam Pattern Tab -->
+                        <div class="tab-pane fade" id="exam" role="tabpanel">
+                            {% if job.exam_pattern %}
+                                {{ job.exam_pattern|linebreaks }}
+                            {% else %}
+                                <p class="text-muted">Exam pattern will be updated soon.</p>
+                            {% endif %}
+                        </div>
+
+                        <!-- Syllabus Tab -->
+                        <div class="tab-pane fade" id="syllabus" role="tabpanel">
+                            {% if job.syllabus %}
+                                {{ job.syllabus|linebreaks }}
+                            {% else %}
+                                <p class="text-muted">Syllabus will be updated soon.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Application Details -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Application Details</h5>
+                    
+                    <div class="mb-3">
+                        <strong>Application Fee:</strong>
+                        <p>{{ job.application_fee }}</p>
+                    </div>
+
+                    {% if job.application_fee_exemption %}
+                        <div class="mb-3">
+                            <strong>Fee Exemption:</strong>
+                            <p>{{ job.application_fee_exemption }}</p>
+                        </div>
+                    {% endif %}
+
+                    <div class="mb-3">
+                        <strong>How to Apply:</strong>
+                        <p>{{ job.application_process|linebreaks }}</p>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <a href="{{ job.official_notification }}" target="_blank" class="btn btn-primary">
+                            <i class="fas fa-file-pdf me-1"></i> Official Notification
+                        </a>
+                        <a href="{{ job.apply_link }}" target="_blank" class="btn btn-success">
+                            <i class="fas fa-external-link-alt me-1"></i> Apply Online
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Important Dates -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Important Dates</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2">
+                            <i class="fas fa-calendar-plus text-success me-2"></i>
+                            <strong>Application Start:</strong><br>
+                            {{ job.application_start_date }}
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-calendar-times text-danger me-2"></i>
+                            <strong>Last Date to Apply:</strong><br>
+                            {{ job.application_end_date }}
+                        </li>
+                        {% if job.exam_date %}
+                            <li>
+                                <i class="fas fa-calendar-check text-primary me-2"></i>
+                                <strong>Exam Date:</strong><br>
+                                {{ job.exam_date }}
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Share -->
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Share This Job</h5>
+                    <div class="d-flex justify-content-around">
+                        <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}" target="_blank" class="btn btn-outline-primary">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri }}&text={{ job.title }}" target="_blank" class="btn btn-outline-info">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ request.build_absolute_uri }}&title={{ job.title }}" target="_blank" class="btn btn-outline-secondary">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                        <a href="https://api.whatsapp.com/send?text={{ job.title }}%20{{ request.build_absolute_uri }}" target="_blank" class="btn btn-outline-success">
+                            <i class="fab fa-whatsapp"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %} 

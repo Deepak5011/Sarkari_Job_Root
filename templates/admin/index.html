@@ -1,0 +1,179 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block coltype %}colMS{% endblock %}
+
+{% block bodyclass %}{{ block.super }} dashboard{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+<a href="{% url 'admin:index' %}">{% translate 'Home' %}</a>
+</div>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <div class="row">
+        <!-- Jobs Module -->
+        <div class="col-md-6 mb-4">
+            <div class="module">
+                <h2>Jobs Management</h2>
+                <table>
+                    <tr>
+                        <th>Total Jobs</th>
+                        <td>{{ jobs_count }}</td>
+                    </tr>
+                    <tr>
+                        <th>Active Jobs</th>
+                        <td>{{ active_jobs_count }}</td>
+                    </tr>
+                    <tr>
+                        <th>Applications</th>
+                        <td>{{ applications_count }}</td>
+                    </tr>
+                </table>
+                <div class="module-footer">
+                    <a href="{% url 'admin:jobs_job_changelist' %}" class="button">Manage Jobs</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Module -->
+        <div class="col-md-6 mb-4">
+            <div class="module">
+                <h2>Results Management</h2>
+                <table>
+                    <tr>
+                        <th>Total Results</th>
+                        <td>{{ results_count }}</td>
+                    </tr>
+                    <tr>
+                        <th>Recent Results</th>
+                        <td>{{ recent_results_count }}</td>
+                    </tr>
+                </table>
+                <div class="module-footer">
+                    <a href="{% url 'admin:jobs_result_changelist' %}" class="button">Manage Results</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admit Cards Module -->
+        <div class="col-md-6 mb-4">
+            <div class="module">
+                <h2>Admit Cards Management</h2>
+                <table>
+                    <tr>
+                        <th>Total Admit Cards</th>
+                        <td>{{ admitcards_count }}</td>
+                    </tr>
+                    <tr>
+                        <th>Active Admit Cards</th>
+                        <td>{{ active_admitcards_count }}</td>
+                    </tr>
+                </table>
+                <div class="module-footer">
+                    <a href="{% url 'admin:jobs_admitcard_changelist' %}" class="button">Manage Admit Cards</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Categories Module -->
+        <div class="col-md-6 mb-4">
+            <div class="module">
+                <h2>Categories Management</h2>
+                <table>
+                    <tr>
+                        <th>Total Categories</th>
+                        <td>{{ categories_count }}</td>
+                    </tr>
+                    <tr>
+                        <th>Active Categories</th>
+                        <td>{{ active_categories_count }}</td>
+                    </tr>
+                </table>
+                <div class="module-footer">
+                    <a href="{% url 'admin:jobs_category_changelist' %}" class="button">Manage Categories</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="module">
+        <h2>Recent Activity</h2>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Action</th>
+                        <th>Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for activity in recent_activity %}
+                    <tr>
+                        <td>{{ activity.date }}</td>
+                        <td>{{ activity.action }}</td>
+                        <td>{{ activity.details }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="3">No recent activity</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block sidebar %}
+<div id="content-related">
+    <div class="module">
+        <h2>Quick Actions</h2>
+        <ul class="actionlist">
+            <li>
+                <a href="{% url 'admin:jobs_job_add' %}" class="addlink">
+                    <i class="fas fa-plus me-2"></i>Add New Job
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'admin:jobs_result_add' %}" class="addlink">
+                    <i class="fas fa-plus me-2"></i>Add New Result
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'admin:jobs_admitcard_add' %}" class="addlink">
+                    <i class="fas fa-plus me-2"></i>Add New Admit Card
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'admin:jobs_category_add' %}" class="addlink">
+                    <i class="fas fa-plus me-2"></i>Add New Category
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="module">
+        <h2>System Status</h2>
+        <table>
+            <tr>
+                <th>Django Version</th>
+                <td>{{ django_version }}</td>
+            </tr>
+            <tr>
+                <th>Python Version</th>
+                <td>{{ python_version }}</td>
+            </tr>
+            <tr>
+                <th>Server Time</th>
+                <td>{{ server_time }}</td>
+            </tr>
+        </table>
+    </div>
+</div>
+{% endblock %} 

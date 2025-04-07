@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+
+{% block title %}Results - Sarkari Job Portal{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <!-- Filters Sidebar -->
+        <div class="col-md-3 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">Filters</h5>
+                    <form method="GET" action="{% url 'jobs:result_list' %}">
+                        <!-- Search -->
+                        <div class="mb-3">
+                            <label class="form-label">Search</label>
+                            <input type="text" name="q" class="form-control" value="{{ query|default:'' }}" placeholder="Search results...">
+                        </div>
+
+                        <!-- Categories -->
+                        <div class="mb-3">
+                            <label class="form-label">Category</label>
+                            <select name="category" class="form-select">
+                                <option value="">All Categories</option>
+                                {% for category in categories %}
+                                    <option value="{{ category.slug }}" {% if selected_category == category.slug %}selected{% endif %}>
+                                        {{ category.name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">Apply Filters</button>
+                        {% if query or selected_category %}
+                            <a href="{% url 'jobs:result_list' %}" class="btn btn-outline-secondary w-100 mt-2">Clear Filters</a>
+                        {% endif %}
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Listing -->
+        <div class="col-md-9">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Exam Results</h2>
+                <div class="text-muted">
+                    Found {{ results.paginator.count }} results
+                </div>
+            </div>
+
+            {% if results %}
+                {% for result in results %}
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <div>
+                                    <h4 class="card-title mb-1">{{ result.exam_name }}</h4>
+                                    <h6 class="text-muted">{{ result.organization }}</h6>
+                                </div>
+                                <span class="category-badge">{{ result.category.name }}</span>
+                            </div>
+
+                            <p class="card-text">{{ result.description|truncatewords:50 }}</p>
+
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <i class="fas fa-calendar text-muted me-1"></i>
+                                    Result Date: {{ result.result_date }}
+                                </div>
+                                <div>
+                                    <a href="{% url 'jobs:result_detail' result.pk %}" class="btn btn-primary me-2">
+                                        View Details
+                                    </a>
+                                    <a href="{{ result.result_link }}" target="_blank" class="btn btn-success">
+                                        <i class="fas fa-download me-1"></i> Download Result
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+
+                <!-- Pagination -->
+                {% if results.has_other_pages %}
+                    <nav aria-label="Page navigation" class="mt-4">
+                        <ul class="pagination justify-content-center">
+                            {% if results.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ results.previous_page_number }}{% if query %}&q={{ query }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}">
+                                        Previous
+                                    </a>
+                                </li>
+                            {% endif %}
+
+                            {% for num in results.paginator.page_range %}
+                                {% if results.number == num %}
+                                    <li class="page-item active">
+                                        <span class="page-link">{{ num }}</span>
+                                    </li>
+                                {% elif num > results.number|add:'-3' and num < results.number|add:'3' %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ num }}{% if query %}&q={{ query }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}">
+                                            {{ num }}
+                                        </a>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+
+                            {% if results.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ results.next_page_number }}{% if query %}&q={{ query }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}">
+                                        Next
+                                    </a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                {% endif %}
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                    <h3>No results found</h3>
+                    <p class="text-muted">Try adjusting your search criteria or removing filters</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %} 

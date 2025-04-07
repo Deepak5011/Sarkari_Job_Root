@@ -1,0 +1,265 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - Sarkari Job Portal{% endblock %}
+
+{% block content %}
+    <!-- Hero Section -->
+    <div class="hero-section">
+        <div class="container">
+            <div class="row align-items-center min-vh-50">
+                <div class="col-lg-8 mx-auto text-center">
+                    <h1 class="display-4 mb-4">Find Your Dream Government Job</h1>
+                    <p class="lead mb-4">Search through thousands of government jobs, results, and admit cards</p>
+                    <form method="get" action="{% url 'jobs:search' %}" class="search-form">
+                        <div class="input-group">
+                            <input type="text" name="q" class="form-control form-control-lg" placeholder="Search jobs, results, or admit cards...">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-search"></i> Search
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Categories Section -->
+    <section class="py-5">
+        <div class="container">
+            <h2 class="section-title text-center mb-5">Browse by Qualification Level</h2>
+            <div class="row g-4">
+                <!-- 10th Level Jobs -->
+                <div class="col-md-6 col-lg-3">
+                    <a href="{% url 'jobs:job_list' %}?category=1" class="qualification-card">
+                        <div class="qualification-icon">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        <div class="qualification-content">
+                            <h3 class="qualification-title">10th Level Jobs</h3>
+                            <p class="qualification-description">Government jobs requiring 10th standard qualification</p>
+                            <div class="qualification-stats">
+                                <span><i class="fas fa-briefcase"></i> Entry Level</span>
+                                <span><i class="fas fa-users"></i> High Vacancies</span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <!-- 12th Level Jobs -->
+                <div class="col-md-6 col-lg-3">
+                    <a href="{% url 'jobs:job_list' %}?category=2" class="qualification-card">
+                        <div class="qualification-icon">
+                            <i class="fas fa-school"></i>
+                        </div>
+                        <div class="qualification-content">
+                            <h3 class="qualification-title">12th Level Jobs</h3>
+                            <p class="qualification-description">Government jobs requiring 12th standard qualification</p>
+                            <div class="qualification-stats">
+                                <span><i class="fas fa-briefcase"></i> Intermediate</span>
+                                <span><i class="fas fa-users"></i> Regular Posts</span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <!-- Graduate Level Jobs -->
+                <div class="col-md-6 col-lg-3">
+                    <a href="{% url 'jobs:job_list' %}?category=3" class="qualification-card">
+                        <div class="qualification-icon">
+                            <i class="fas fa-university"></i>
+                        </div>
+                        <div class="qualification-content">
+                            <h3 class="qualification-title">Graduate Level Jobs</h3>
+                            <p class="qualification-description">Government jobs requiring graduation degree</p>
+                            <div class="qualification-stats">
+                                <span><i class="fas fa-briefcase"></i> Professional</span>
+                                <span><i class="fas fa-users"></i> Competitive</span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <!-- PG Level Jobs -->
+                <div class="col-md-6 col-lg-3">
+                    <a href="{% url 'jobs:job_list' %}?category=4" class="qualification-card">
+                        <div class="qualification-icon">
+                            <i class="fas fa-award"></i>
+                        </div>
+                        <div class="qualification-content">
+                            <h3 class="qualification-title">PG Level Jobs</h3>
+                            <p class="qualification-description">Government jobs requiring post-graduation degree</p>
+                            <div class="qualification-stats">
+                                <span><i class="fas fa-briefcase"></i> Advanced</span>
+                                <span><i class="fas fa-users"></i> Specialized</span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Latest Jobs Section -->
+    <section class="py-5 bg-light">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="section-title">Latest Jobs</h2>
+                <a href="{% url 'jobs:job_list' %}" class="btn btn-outline-primary">View All Jobs</a>
+            </div>
+            <div class="row g-4">
+                {% for job in latest_jobs %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="job-card">
+                        <div class="job-header">
+                            <span class="job-category">{{ job.category.name }}</span>
+                            <span class="job-deadline">Deadline: {{ job.application_deadline|date:"M d, Y" }}</span>
+                        </div>
+                        <h3 class="job-title">{{ job.title }}</h3>
+                        <p class="job-organization">{{ job.organization }}</p>
+                        <p class="job-location"><i class="fas fa-map-marker-alt"></i> {{ job.location }}</p>
+                        <p class="job-salary"><i class="fas fa-money-bill-wave"></i> {{ job.salary_range }}</p>
+                        <a href="{% url 'jobs:job_detail' job.pk %}" class="btn btn-primary w-100">View Details</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Latest Results Section -->
+    <section class="py-5">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="section-title">Latest Results</h2>
+                <a href="{% url 'jobs:result_list' %}" class="btn btn-outline-primary">View All Results</a>
+            </div>
+            <div class="row g-4">
+                {% for result in latest_results %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="result-card">
+                        <div class="result-header">
+                            <span class="result-category">{{ result.category.name }}</span>
+                            <span class="result-date">Date: {{ result.result_date|date:"M d, Y" }}</span>
+                        </div>
+                        <h3 class="result-title">{{ result.title }}</h3>
+                        <p class="result-organization">{{ result.organization }}</p>
+                        <p class="result-description">{{ result.description|truncatewords:20 }}</p>
+                        <a href="{% url 'jobs:result_detail' result.pk %}" class="btn btn-primary w-100">View Result</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Latest Admit Cards Section -->
+    <section class="py-5 bg-light">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="section-title">Latest Admit Cards</h2>
+                <a href="{% url 'jobs:admitcard_list' %}" class="btn btn-outline-primary">View All Admit Cards</a>
+            </div>
+            <div class="row g-4">
+                {% for admit_card in latest_admit_cards %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="admit-card">
+                        <div class="admit-card-header">
+                            <span class="admit-card-category">{{ admit_card.category.name }}</span>
+                            <span class="admit-card-date">Date: {{ admit_card.admit_card_date|date:"M d, Y" }}</span>
+                        </div>
+                        <h3 class="admit-card-title">{{ admit_card.title }}</h3>
+                        <p class="admit-card-organization">{{ admit_card.organization }}</p>
+                        <p class="admit-card-description">{{ admit_card.description|truncatewords:20 }}</p>
+                        <a href="{% url 'jobs:admitcard_detail' admit_card.pk %}" class="btn btn-primary w-100">Download Admit Card</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <style>
+    .qualification-card {
+        display: block;
+        background: #fff;
+        border-radius: 15px;
+        padding: 25px;
+        text-decoration: none;
+        color: inherit;
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        height: 100%;
+        border: 1px solid rgba(0,0,0,0.1);
+    }
+
+    .qualification-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        border-color: #007bff;
+    }
+
+    .qualification-icon {
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(45deg, #007bff, #00bcd4);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 20px;
+    }
+
+    .qualification-icon i {
+        font-size: 24px;
+        color: white;
+    }
+
+    .qualification-content {
+        text-align: left;
+    }
+
+    .qualification-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 10px;
+        color: #2c3e50;
+    }
+
+    .qualification-description {
+        font-size: 0.9rem;
+        color: #6c757d;
+        margin-bottom: 15px;
+    }
+
+    .qualification-stats {
+        display: flex;
+        gap: 15px;
+        font-size: 0.85rem;
+        color: #495057;
+    }
+
+    .qualification-stats span {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .qualification-stats i {
+        color: #007bff;
+    }
+
+    /* Custom colors for each qualification level */
+    .qualification-card:nth-child(1) .qualification-icon {
+        background: linear-gradient(45deg, #FF6B6B, #FF8E53);
+    }
+
+    .qualification-card:nth-child(2) .qualification-icon {
+        background: linear-gradient(45deg, #4CAF50, #8BC34A);
+    }
+
+    .qualification-card:nth-child(3) .qualification-icon {
+        background: linear-gradient(45deg, #2196F3, #03A9F4);
+    }
+
+    .qualification-card:nth-child(4) .qualification-icon {
+        background: linear-gradient(45deg, #9C27B0, #E91E63);
+    }
+    </style>
+{% endblock %} 

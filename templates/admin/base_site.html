@@ -1,0 +1,235 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block title %}{{ title }} | {{ site_title|default:_('Sarkari Job Admin') }}{% endblock %}
+
+{% block extrastyle %}
+<style>
+    :root {
+        --primary-color: #2563eb;
+        --secondary-color: #475569;
+        --success-color: #22c55e;
+        --danger-color: #ef4444;
+        --warning-color: #f59e0b;
+        --info-color: #3b82f6;
+        --light-color: #f8fafc;
+        --dark-color: #1e293b;
+        --border-color: #e2e8f0;
+        --border-radius: 0.5rem;
+        --box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+
+    /* Header */
+    #header {
+        background: var(--primary-color);
+        color: white;
+        padding: 1rem 0;
+        box-shadow: var(--box-shadow);
+    }
+
+    #header a:link, #header a:visited {
+        color: white;
+    }
+
+    /* Branding */
+    #branding h1 {
+        font-weight: 600;
+        font-size: 1.5rem;
+    }
+
+    /* Breadcrumbs */
+    .breadcrumbs {
+        background: var(--light-color);
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .breadcrumbs a {
+        color: var(--primary-color);
+        text-decoration: none;
+    }
+
+    /* Main Content */
+    #content {
+        padding: 2rem;
+    }
+
+    /* Module */
+    .module {
+        background: white;
+        border-radius: var(--border-radius);
+        box-shadow: var(--box-shadow);
+        margin-bottom: 1.5rem;
+        overflow: hidden;
+    }
+
+    .module h2, .module caption {
+        background: var(--light-color);
+        color: var(--dark-color);
+        padding: 1rem;
+        font-weight: 600;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    /* Tables */
+    #result_list {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    #result_list th {
+        background: var(--light-color);
+        padding: 1rem;
+        font-weight: 600;
+        text-align: left;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    #result_list td {
+        padding: 1rem;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    #result_list tr:hover {
+        background: var(--light-color);
+    }
+
+    /* Forms */
+    .form-row {
+        padding: 1rem;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .form-row:last-child {
+        border-bottom: none;
+    }
+
+    .form-row label {
+        font-weight: 500;
+        color: var(--dark-color);
+    }
+
+    .form-row input[type="text"],
+    .form-row input[type="email"],
+    .form-row input[type="password"],
+    .form-row textarea,
+    .form-row select {
+        width: 100%;
+        padding: 0.5rem;
+        border: 1px solid var(--border-color);
+        border-radius: var(--border-radius);
+        margin-top: 0.5rem;
+    }
+
+    /* Buttons */
+    .button, input[type=submit], input[type=button], .submit-row input, a.button {
+        background: var(--primary-color);
+        color: white;
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: var(--border-radius);
+        cursor: pointer;
+        font-weight: 500;
+        transition: background-color 0.2s;
+    }
+
+    .button:hover, input[type=submit]:hover, input[type=button]:hover {
+        background: #1d4ed8;
+    }
+
+    .button.default, input[type=submit].default {
+        background: var(--success-color);
+    }
+
+    .button.default:hover, input[type=submit].default:hover {
+        background: #16a34a;
+    }
+
+    /* Dashboard */
+    .dashboard .module {
+        margin-bottom: 1.5rem;
+    }
+
+    .dashboard .module table {
+        width: 100%;
+    }
+
+    .dashboard .module table th {
+        padding: 0.75rem;
+        font-weight: 500;
+    }
+
+    .dashboard .module table td {
+        padding: 0.75rem;
+    }
+
+    /* Messages */
+    .messagelist li {
+        padding: 1rem;
+        margin-bottom: 0.5rem;
+        border-radius: var(--border-radius);
+    }
+
+    .messagelist li.success {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .messagelist li.error {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    .messagelist li.warning {
+        background: #fef3c7;
+        color: #92400e;
+    }
+
+    .messagelist li.info {
+        background: #dbeafe;
+        color: #1e40af;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        #content {
+            padding: 1rem;
+        }
+
+        .form-row {
+            padding: 0.75rem;
+        }
+
+        #result_list {
+            display: block;
+            overflow-x: auto;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block branding %}
+<h1 id="site-name">
+    <a href="{% url 'admin:index' %}">
+        <i class="fas fa-briefcase me-2"></i>
+        Sarkari Job Administration
+    </a>
+</h1>
+{% endblock %}
+
+{% block nav-global %}
+<div class="admin-nav">
+    <a href="{% url 'admin:jobs_job_changelist' %}" class="nav-link">
+        <i class="fas fa-briefcase me-1"></i>Jobs
+    </a>
+    <a href="{% url 'admin:jobs_result_changelist' %}" class="nav-link">
+        <i class="fas fa-poll me-1"></i>Results
+    </a>
+    <a href="{% url 'admin:jobs_admitcard_changelist' %}" class="nav-link">
+        <i class="fas fa-id-card me-1"></i>Admit Cards
+    </a>
+    <a href="{% url 'admin:jobs_category_changelist' %}" class="nav-link">
+        <i class="fas fa-tags me-1"></i>Categories
+    </a>
+</div>
+{% endblock %} 

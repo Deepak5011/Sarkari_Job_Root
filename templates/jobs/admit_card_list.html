@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+
+{% block title %}Admit Cards - Sarkari Job Portal{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <!-- Filters Sidebar -->
+        <div class="col-lg-3 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="card-title mb-0">Filters</h5>
+                </div>
+                <div class="card-body">
+                    <form method="get" action="{% url 'jobs:admitcard_list' %}">
+                        <!-- Search -->
+                        <div class="mb-3">
+                            <label class="form-label">Search</label>
+                            <input type="text" name="q" class="form-control" value="{{ search_query }}" placeholder="Search admit cards...">
+                        </div>
+
+                        <!-- Category Filter -->
+                        <div class="mb-3">
+                            <label class="form-label">Qualification Level</label>
+                            <div class="list-group">
+                                <a href="{% url 'jobs:admitcard_list' %}" class="list-group-item list-group-item-action {% if not selected_category %}active{% endif %}">
+                                    All Categories
+                                </a>
+                                {% for category in categories %}
+                                <a href="{% url 'jobs:admitcard_list' %}?category={{ category.id }}" 
+                                   class="list-group-item list-group-item-action {% if selected_category == category.id|stringformat:'s' %}active{% endif %}">
+                                    {{ category.name }}
+                                </a>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">Apply Filters</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admit Cards List -->
+        <div class="col-lg-9">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="h4 mb-0">Admit Cards</h2>
+                <div class="dropdown">
+                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                        Sort By
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="?sort=latest">Latest First</a></li>
+                        <li><a class="dropdown-item" href="?sort=oldest">Oldest First</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            {% if admit_cards %}
+            <div class="row g-4">
+                {% for admit_card in admit_cards %}
+                <div class="col-md-6">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <div>
+                                    <h3 class="h5 mb-1">
+                                        <a href="{% url 'jobs:admitcard_detail' admit_card.pk %}" class="text-decoration-none text-dark">
+                                            {{ admit_card.exam_name }}
+                                        </a>
+                                    </h3>
+                                    <p class="text-muted mb-0">{{ admit_card.organization }}</p>
+                                </div>
+                                <span class="badge bg-primary">{{ admit_card.category.name }}</span>
+                            </div>
+                            
+                            <p class="card-text text-muted mb-3">{{ admit_card.description|truncatewords:20 }}</p>
+                            
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <small class="text-muted">
+                                        <i class="fas fa-calendar-alt me-1"></i>
+                                        {{ admit_card.admit_card_date|date:"M d, Y" }}
+                                    </small>
+                                </div>
+                                <a href="{% url 'jobs:admitcard_detail' admit_card.pk %}" class="btn btn-sm btn-outline-primary">
+                                    View Details
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Pagination -->
+            {% if admit_cards.has_other_pages %}
+            <nav class="mt-4">
+                <ul class="pagination justify-content-center">
+                    {% if admit_cards.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ admit_cards.previous_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if search_query %}&q={{ search_query }}{% endif %}">
+                            Previous
+                        </a>
+                    </li>
+                    {% endif %}
+
+                    {% for num in admit_cards.paginator.page_range %}
+                    <li class="page-item {% if admit_cards.number == num %}active{% endif %}">
+                        <a class="page-link" href="?page={{ num }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if search_query %}&q={{ search_query }}{% endif %}">
+                            {{ num }}
+                        </a>
+                    </li>
+                    {% endfor %}
+
+                    {% if admit_cards.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ admit_cards.next_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if search_query %}&q={{ search_query }}{% endif %}">
+                            Next
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+            {% else %}
+            <div class="alert alert-info">
+                No admit cards found matching your criteria.
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %} 

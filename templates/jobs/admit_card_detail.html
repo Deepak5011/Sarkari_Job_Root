@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+
+{% block title %}{{ admit_card.exam_name }} Admit Card - Sarkari Job Portal{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <!-- Main Content -->
+        <div class="col-lg-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-4">
+                        <div>
+                            <h1 class="h3 mb-2">{{ admit_card.exam_name }}</h1>
+                            <p class="text-muted mb-2">{{ admit_card.organization }}</p>
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="badge bg-primary">{{ admit_card.category.name }}</span>
+                                <span class="text-muted">
+                                    <i class="fas fa-calendar-alt me-1"></i>
+                                    {{ admit_card.admit_card_date|date:"M d, Y" }}
+                                </span>
+                            </div>
+                        </div>
+                        <a href="{{ admit_card.admit_card_link }}" target="_blank" class="btn btn-success">
+                            <i class="fas fa-download me-2"></i>Download Admit Card
+                        </a>
+                    </div>
+
+                    {% if admit_card.description %}
+                    <div class="mb-4">
+                        <h5 class="mb-3">Description</h5>
+                        <div class="description">
+                            {{ admit_card.description|linebreaks }}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Related Admit Cards -->
+            {% if related_admit_cards %}
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="card-title mb-0">Related Admit Cards</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-4">
+                        {% for related_card in related_admit_cards %}
+                        <div class="col-md-6">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h6 class="card-title">
+                                        <a href="{% url 'jobs:admitcard_detail' related_card.pk %}" class="text-decoration-none">
+                                            {{ related_card.exam_name }}
+                                        </a>
+                                    </h6>
+                                    <p class="card-text small text-muted mb-2">{{ related_card.organization }}</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <small class="text-muted">
+                                            <i class="fas fa-calendar-alt me-1"></i>
+                                            {{ related_card.admit_card_date|date:"M d, Y" }}
+                                        </small>
+                                        <a href="{% url 'jobs:admitcard_detail' related_card.pk %}" class="btn btn-sm btn-outline-primary">
+                                            View Details
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Quick Links -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="card-title mb-0">Quick Links</h5>
+                </div>
+                <div class="card-body">
+                    <div class="list-group list-group-flush">
+                        <a href="{{ admit_card.admit_card_link }}" target="_blank" class="list-group-item list-group-item-action">
+                            <i class="fas fa-download me-2"></i>Download Admit Card
+                        </a>
+                        <a href="{% url 'jobs:admitcard_list' %}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-list me-2"></i>View All Admit Cards
+                        </a>
+                        <a href="{% url 'jobs:job_list' %}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-briefcase me-2"></i>Browse Jobs
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Share -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="card-title mb-0">Share</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-around">
+                        <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}" target="_blank" class="btn btn-outline-primary">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri }}&text={{ admit_card.exam_name }} Admit Card" target="_blank" class="btn btn-outline-info">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="https://wa.me/?text={{ admit_card.exam_name }} Admit Card - {{ request.build_absolute_uri }}" target="_blank" class="btn btn-outline-success">
+                            <i class="fab fa-whatsapp"></i>
+                        </a>
+                        <a href="https://telegram.me/share/url?url={{ request.build_absolute_uri }}&text={{ admit_card.exam_name }} Admit Card" target="_blank" class="btn btn-outline-info">
+                            <i class="fab fa-telegram-plane"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
