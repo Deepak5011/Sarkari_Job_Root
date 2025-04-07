@@ -23,10 +23,26 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-ywpqra=b7%zey10n9t8bp76=#wn(h$0c!94^3f5w9c3jovk8=-'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = False  # Set to False in production
 
-ALLOWED_HOSTS = ['54.205.224.106']  # In production, replace with your actual domain
+ALLOWED_HOSTS = [
+    '54.205.224.106',  # Your EC2 IP
+    'localhost',
+    '127.0.0.1',
+    '[::1]',
+]
 
+# For better security, if you're using a domain name, use:
+# ALLOWED_HOSTS = ['.your-domain.com']  # The dot allows subdomains
+
+# Security Settings
+CSRF_COOKIE_SECURE = True
+SECURE_SSL_REDIRECT = False  # Set to True if you have SSL configured
+SESSION_COOKIE_SECURE = True
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+X_FRAME_OPTIONS = 'DENY'
 
 # Application definition
 
